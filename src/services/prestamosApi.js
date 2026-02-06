@@ -1,4 +1,4 @@
-const API = "http://localhost:4000/api";
+const API = "https://backend-inicial-proyecto-prestamo.onrender.com/api";
 
 const authHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -26,7 +26,7 @@ export async function registrarPrestamo(form) {
     if (v) formData.append(k, v);
   });
 
-  const res = await fetch("http://localhost:4000/api/prestamos", {
+  const res = await fetch("https://backend-inicial-proyecto-prestamo.onrender.com/api/prestamos", {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
     body: formData,

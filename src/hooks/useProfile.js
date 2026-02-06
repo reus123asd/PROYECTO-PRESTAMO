@@ -19,7 +19,7 @@ export const useProfile = () => {
 
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/users/profile", {
+        const res = await fetch("https://backend-inicial-proyecto-prestamo.onrender.com/api/users/profile", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -46,7 +46,7 @@ export const useProfile = () => {
   const updateProfile = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:4000/api/users/profile", {
+      const res = await fetch("https://backend-inicial-proyecto-prestamo.onrender.com/api/users/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

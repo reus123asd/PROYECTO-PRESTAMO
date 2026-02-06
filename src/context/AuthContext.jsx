@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (credentials) => {
-    const res = await fetch("http://localhost:4000/api/auth/login", {
+    const res = await fetch("https://backend-inicial-proyecto-prestamo.onrender.com/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (dataForm) => {
-    const res = await fetch("http://localhost:4000/api/auth/register", {
+    const res = await fetch("https://backend-inicial-proyecto-prestamo.onrender.com/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dataForm),
