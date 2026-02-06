@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden; /* evita el scroll */
+}
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@layer base {
+    html {
+        @apply transition-colors duration-300;
+    }
+    body {
+        @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+    }
+}
+@layer utilities {
+  .animate-fade {
+    animation: fadeIn 0.18s ease-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: scale(1); }
+  }
+}
+
+/* Scrollbar general */
+::-webkit-scrollbar {
+    width: 8px;          /* grosor del scroll vertical */
+    height: 8px;         /* grosor del scroll horizontal */
+}
+
+/* Fondo del scroll */
+::-webkit-scrollbar-track {
+    background: #1e1e2d;  /* color del fondo del track */
+    border-radius: 10px;
+}
+
+/* La barra que se mueve */
+::-webkit-scrollbar-thumb {
+    background: #3b3b4c;   /* color del thumb */
+    border-radius: 10px;
+}
+
+/* Hover en la barra */
+::-webkit-scrollbar-thumb:hover {
+    background: #4e4e61;
+}
