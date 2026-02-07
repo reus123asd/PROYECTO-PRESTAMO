@@ -54,19 +54,11 @@ const Login = () => {
     try {
       setLoading(true);
       await login(form);
-    } catch (error) {
-      if (error.message === "Usuario no encontrado") {
-        setErrors({
-          email: "Usuario no encontrado",
-          password: "",
-        });
-      }
-      if (error.message === "Contraseña incorrecta") {
-        setErrors({
-          email: "",
-          password: "Contraseña incorrecta",
-        });
-      }
+    } catch (error) { 
+      setErrors({
+        email: "",
+        password: error.message,
+      });
     }
     finally {
       setLoading(false);
