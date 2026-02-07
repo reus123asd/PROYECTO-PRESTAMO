@@ -58,7 +58,8 @@ const Register = () => {
             placeholder="Introduce tu contraseña"
           />
 
-          <button className="w-full bg-blue-500 text-white font-bold py-2 rounded-lg">
+          <button className=" w-full bg-blue-500 text-white font-bold py-2 rounded-lg
+            transition-all duration-200 hover:bg-blue-600 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer">
             Registrarme
           </button>
         </form>

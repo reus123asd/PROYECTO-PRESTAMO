@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Sidebar from '../layout/sidebar/Sidebar'
 import Header from '../layout/Header/Header'
 import Dashboard from './Dashboard'
@@ -12,6 +12,22 @@ export default function Home() {
   const [sideBarCollapsed, setSideBarCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState("Dashboard");
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        // Mobile
+        setSideBarCollapsed(true);
+      } else {
+        // Desktop
+        setSideBarCollapsed(false);
+      }
+    };
+
+    handleResize(); // al cargar
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <div
@@ -21,7 +37,7 @@ export default function Home() {
       <div className='flex h-screen overflow-hidden'>
         <Sidebar
           collapsed={sideBarCollapsed}
-          onToggle={() => setSideBarCollapsed(sideBarCollapsed)}
+          onToggle={() => setSideBarCollapsed(p => !p)}
           currentPage={currentPage}
           onPageChange={setCurrentPage}
         />

@@ -18,26 +18,26 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (credentials) => {
-    const res = await fetch("https://backend-inicial-proyecto-prestamo.onrender.com/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(credentials),
-    });
-
-
-    if (!res.ok) throw new Error("Credenciales incorrectas");
-
+    const res = await fetch(
+      "https://backend-inicial-proyecto-prestamo.onrender.com/api/auth/login",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credentials),
+      }
+    );
 
     const data = await res.json();
 
+    if (!res.ok) {
+      throw new Error(data.message);
+    }
 
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
 
-
     setUser(data.user);
     setToken(data.token);
-
 
     navigate("/Home");
   };

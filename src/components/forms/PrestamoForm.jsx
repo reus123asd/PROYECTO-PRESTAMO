@@ -27,7 +27,6 @@ const fields = [
     label: "Fecha del préstamo",
     name: "fecha",
     type: "date",
-    disabled: true,
   },
   {
     label: "Cantidad de cuotas",
