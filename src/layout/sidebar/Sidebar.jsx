@@ -1,0 +1,49 @@
+import { Zap } from "lucide-react";
+import { menuItems } from "../../utils/menuItems";
+import SidebarItem from "./SidebarItem";
+import SidebarProfile from "./SidebarProfile";
+import { useAuth } from "../../hooks/useAuth";
+
+const Sidebar = ({ collapsed, currentPage, onPageChange }) => {
+  const { user } = useAuth();
+
+  return (
+    <aside
+      className={`${
+        collapsed ? "w-20" : "w-72"
+      } transition-all bg-white/80 dark:bg-slate-900/80
+      border-r border-slate-200 dark:border-slate-700 flex flex-col`}
+    >
+      {/* Logo */}
+      <div className="p-5 border-b flex items-center gap-3">
+        <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600
+          rounded-xl flex items-center justify-center">
+          <Zap className="text-white" />
+        </div>
+        {!collapsed && (
+          <div>
+            <h1 className="font-bold">Reus</h1>
+            <p className="text-xs text-slate-500">Admin Panel</p>
+          </div>
+        )}
+      </div>
+
+      {/* Menu */}
+      <nav className="flex-1 p-4 space-y-2">
+        {menuItems.map(item => (
+          <SidebarItem
+            key={item.id}
+            item={item}
+            collapsed={collapsed}
+            active={currentPage === item.id}
+            onClick={() => onPageChange(item.id)}
+          />
+        ))}
+      </nav>
+
+      {!collapsed && <SidebarProfile user={user} />}
+    </aside>
+  );
+};
+
+export default Sidebar;

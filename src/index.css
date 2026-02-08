@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+/* Esto fuerza a que el body responda al cambio */
+@layer base {
+  body {
+    @apply bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300;
+  }
+}
+
+/* Esto obliga a que el texto del autocompletado sea oscuro en modo claro */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #0f172a; /* color slate-900 */
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Y esto para cuando SI estés en modo oscuro */
+.dark input:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff;
+  -webkit-box-shadow: 0 0 0px 1000px #1e293b inset; /* color slate-800 */
+}
