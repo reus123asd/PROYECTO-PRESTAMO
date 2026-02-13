@@ -19,12 +19,12 @@ export default function InputField({
           
           /* BORDE SIEMPRE VISIBLE */
           border-2 
-          ${error 
-            ? "border-red-500" 
+          ${error
+            ? "border-red-500"
             : "border-slate-400 dark:border-slate-700"} /* Aquí definimos el borde base */
           
           /* EFECTO HOVER (Al pasar el mouse) */
-          hover:border-slate-400 dark:hover:border-slate-600
+          hover:border-blue-400 dark:hover:border-slate-500
           
           /* EFECTO FOCUS (Al hacer clic) */
           focus:border-blue-500 dark:focus:border-blue-400 

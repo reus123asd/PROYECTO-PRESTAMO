@@ -5,15 +5,17 @@ import "./index.css";
 import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
+import { Toaster } from "sonner";
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>]]
   <ThemeProvider>
+    <Toaster richColors position="top-center" />
     <BrowserRouter>
       <AuthProvider>
         <App />
       </AuthProvider>
     </BrowserRouter>
-  // </ThemeProvider>
+  </ThemeProvider>
   // </StrictMode>
 );

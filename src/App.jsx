@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Home from "./pages/Home";
+import MainLayout from "./layout/MainLayout";
 import PrivateRoute from "./routes/PrivateRoute";
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
         path="/home"
         element={
           <PrivateRoute>
-            <Home />
+            <MainLayout />
           </PrivateRoute>
         }
       />

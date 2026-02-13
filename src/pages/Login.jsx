@@ -1,67 +1,36 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import InputField from "../components/forms/InputField";
 import { useAuth } from "../hooks/useAuth";
 import LoadingModal from "../components/common/LoadingModal";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+const loginSchema = z.object({
+  email: z.string().email("Correo inválido").min(1, "El correo es obligatorio"),
+  password: z
+    .string()
+    .min(6, "La contraseña debe tener al menos 6 caracteres")
+    .min(1, "La contraseña es obligatoria"),
+});
 
 const Login = () => {
   const { login } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
 
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
   });
 
-  const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
-
-    setErrors({
-      ...errors,
-      [e.target.name]: "",
-    });
-  };
-
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!form.email.trim()) {
-      newErrors.email = "El correo es obligatorio";
-    } else if (!/\S+@\S+\.\S+/.test(form.email)) {
-      newErrors.email = "Correo inválido";
-    }
-
-    if (!form.password.trim()) {
-      newErrors.password = "La contraseña es obligatoria";
-    } else if (form.password.length < 6) {
-      newErrors.password = "Mínimo 6 caracteres";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-
+  const onSubmit = async (data) => {
     try {
-      setLoading(true);
-      await login(form);
+      await login(data);
     } catch (error) {
-      setErrors({
-        email: "",
-        password: error.message,
-      });
-    }
-    finally {
-      setLoading(false);
+      // Error is handled in AuthContext with toast
     }
   };
 
@@ -72,46 +41,45 @@ const Login = () => {
 
   return (
     <>
-      <div className="bg-slate-900 min-h-screen flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg w-full max-w-md">
-          <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
+      <div className="bg-slate-100 dark:bg-slate-900 min-h-screen flex items-center justify-center transition-colors">
+        <div className="bg-white dark:bg-[#1A2234] p-8 rounded-lg w-full max-w-md border border-gray-200 dark:border-white/10 shadow-lg">
+          <h2 className="text-3xl font-bold text-center mb-6 text-gray-900 dark:text-white">Iniciar Sesión</h2>
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
+          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
             <InputField
               label="Correo"
-              name="email"
               type="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="Ingrese tu email"
-              error={errors.email}
+              placeholder="Ingresa tu correo"
+              error={errors.email?.message}
+              {...register("email")}
             />
 
             <InputField
               label="Contraseña"
-              name="password"
               type="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Ingrese tu contraseña"
-              error={errors.password}
+              placeholder="Ingresa tu contraseña"
+              error={errors.password?.message}
+              {...register("password")}
             />
 
-            <button className=" w-full bg-blue-500 text-white font-bold py-2 rounded-lg
-            transition-all duration-200 hover:bg-blue-600 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer">
-              Iniciar sesión
+            <button
+              disabled={isSubmitting}
+              className="w-full bg-blue-500 text-white font-bold py-2 rounded-lg
+            transition-all duration-200 hover:bg-blue-600 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"}
             </button>
           </form>
 
-          <p className="mt-4 text-center">
+          <p className="mt-4 text-center text-gray-600 dark:text-gray-400">
             ¿Nuevo usuario?
-            <Link className="text-blue-600 font-semibold ml-1" to="/register">
+            <Link className="text-blue-600 dark:text-blue-400 font-semibold ml-1 hover:underline" to="/register">
               Regístrate aquí
             </Link>
           </p>
         </div>
       </div>
-      <LoadingModal show={loading} text="Iniciando sesión..." />
+      <LoadingModal show={isSubmitting} text="Iniciando sesión..." />
     </>
   );
 };

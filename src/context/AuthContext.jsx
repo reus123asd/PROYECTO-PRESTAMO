@@ -1,5 +1,9 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { toast } from "sonner";
+
+const API = import.meta.env.VITE_API_URL || "https://backend-inicial-proyecto-prestamo.onrender.com/api";
 
 const AuthContext = createContext();
 
@@ -9,13 +13,33 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
 
   useEffect(() => {
+    // Wake up server due to Render free tier inactivity
+    fetch(`${API}/prestamos`)
+      .catch(() => { });
+
     const storedUser = localStorage.getItem("user");
     const storedToken = localStorage.getItem("token");
+
     if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser));
-      setToken(storedToken);
+      if (isTokenExpired(storedToken)) {
+        logout();
+        toast.error("Sesión expirada, por favor inicia sesión nuevamente");
+      } else {
+        setUser(JSON.parse(storedUser));
+        setToken(storedToken);
+      }
     }
   }, []);
+
+  const isTokenExpired = (token) => {
+    try {
+      const decoded = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+      return decoded.exp < currentTime;
+    } catch (error) {
+      return true;
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -29,35 +53,40 @@ export const AuthProvider = ({ children }) => {
   }, [user]);
 
   const login = async (credentials) => {
-    const res = await fetch(
-      "https://backend-inicial-proyecto-prestamo.onrender.com/api/auth/login",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credentials),
+    try {
+      const res = await fetch(
+        `${API}/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(credentials),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Error al iniciar sesión");
       }
-    );
 
-    const data = await res.json();
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
 
-    if (!res.ok) {
-      throw new Error(data.message);
+      setUser(data.user);
+      setToken(data.token);
+
+      toast.success(`Bienvenido, ${data.user.username}`);
+      navigate("/Home");
+    } catch (error) {
+      toast.error(error.message);
+      throw error;
     }
-
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
-
-    setUser(data.user);
-    setToken(data.token);
-
-    navigate("/Home");
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("theme");
-
 
     document.documentElement.classList.remove('dark');
 
@@ -68,7 +97,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (dataForm) => {
-    const res = await fetch("https://backend-inicial-proyecto-prestamo.onrender.com/api/auth/register", {
+    const res = await fetch(`${API}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dataForm),

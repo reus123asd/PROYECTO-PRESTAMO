@@ -26,18 +26,20 @@ const UserMenu = ({ user, setOpen, setCurrentView }) => {
           setOpen(false);
           setCurrentView("Profile");
         }}
-        className="w-full flex justify-between items-center px-4 py-3
-        hover:bg-slate-100 dark:hover:bg-slate-800"
+        className="w-full flex justify-between items-center px-4 py-3 text-slate-700 dark:text-slate-300
+        hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400
+        transition-all duration-200 group"
       >
-        Perfil <User size={18} />
+        Perfil <User size={18} className="transition-transform duration-200 group-hover:scale-110" />
       </button>
 
       <button
         onClick={handleLogout}
         className="w-full flex justify-between items-center px-4 py-3
-        text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+        text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-400
+        transition-all duration-200 group"
       >
-        Cerrar sesión <LogOut size={18} />
+        Cerrar sesión <LogOut size={18} className="transition-transform duration-200 group-hover:translate-x-1" />
       </button>
     </div>
   );

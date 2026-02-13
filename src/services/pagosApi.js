@@ -1,4 +1,4 @@
-const API = "https://backend-inicial-proyecto-prestamo.onrender.com/api";
+const API = import.meta.env.VITE_API_URL || "https://backend-inicial-proyecto-prestamo.onrender.com/api";
 
 const authHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,

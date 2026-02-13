@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import Sidebar from '../layout/sidebar/Sidebar'
-import Header from '../layout/Header/Header'
-import Dashboard from './Dashboard'
-import AppRegistration from './AppRegistration'
-import Payments from './Payments'
-import Record from './Record';
-import Profile from './Profile';
+import Sidebar from './sidebar/Sidebar'
+import Header from './Header/Header'
+import Dashboard from '../pages/Dashboard'
+import LoanCreate from '../pages/LoanCreate'
+import Payments from '../pages/Payments'
+import Loans from '../pages/Loans';
+import Profile from '../pages/Profile';
 
-export default function Home() {
+export default function MainLayout() {
 
   const [sideBarCollapsed, setSideBarCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState("Dashboard");
@@ -30,16 +30,16 @@ export default function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-useEffect(() => {
-  // Accedemos directamente al elemento raíz del navegador
-  const root = window.document.documentElement;
-  
-  if (darkMode) {
-    root.classList.add('dark');
-  } else {
-    root.classList.remove('dark');
-  }
-}, [darkMode]);
+  useEffect(() => {
+    // Accedemos directamente al elemento raíz del navegador
+    const root = window.document.documentElement;
+
+    if (darkMode) {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   return (
 
@@ -64,8 +64,8 @@ useEffect(() => {
             <div className='p-6 space-y-6'>
               {currentPage === "Profile" && <Profile />}
               {currentPage === "Dashboard" && <Dashboard />}
-              {currentPage === "Historial" && <Record />}
-              {currentPage === "Registro" && <AppRegistration />}
+              {currentPage === "Historial" && <Loans />}
+              {currentPage === "Registro" && <LoanCreate />}
               {currentPage === "Pagos" && <Payments />}
             </div>
           </main>
