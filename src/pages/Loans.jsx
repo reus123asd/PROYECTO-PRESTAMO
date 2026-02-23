@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getPrestamos, deletePrestamo } from "../services/prestamosApi";
 import PrestamosTable from "../components/tables/PrestamosTable";
 import PrestamoModal from "../components/modals/PrestamoModal";
+import EditPrestamoModal from "../components/modals/EditPrestamoModal";
 import DeleteModal from "../components/modals/DeleteModal";
 import LoadingModal from "../components/common/LoadingModal";
 import { Search } from "lucide-react";
@@ -10,6 +11,7 @@ export default function Loans() {
   const [records, setRecords] = useState([]);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(null);
+  const [editRecord, setEditRecord] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -49,29 +51,37 @@ export default function Loans() {
   return (
 
     <div className="w-full text-gray-900 dark:text-white transition-colors">
-      {/* Título */}
-      <h1 className="text-4xl font-bold mb-1" > Historial de Préstamos </h1>
-      <p className="text-gray-500 dark:text-gray-400 mb-6">Todos los movimientos registrados.</p>
+      {/* Header Section */}
+      <div className="mb-8">
+        <h1 className="text-4xl font-extrabold tracking-tight mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          Historial de Préstamos
+        </h1>
+        <p className="text-gray-500 dark:text-gray-400 font-medium">
+          Consulta y gestiona todos los movimientos registrados de forma detallada.
+        </p>
+      </div>
 
-      {/* Barra superior */}
-      <div className="flex justify-between items-center mb-4"> {/* Buscador */}
-        <div className="bg-slate-100 dark:bg-[#1A2234] flex items-center px-3 py-2 rounded-xl w-80 border border-gray-200 dark:border-white/10 outline-none focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 hover:border-slate-400 transition-all">
-          <Search className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+      {/* Toolbar Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div className="relative group w-full sm:w-96">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
           <input
             type="text"
-            placeholder="Buscar por nombre..."
-            className="bg-transparent ml-2 outline-none w-full text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
+            placeholder="Buscar por nombre de cliente..."
+            className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white dark:bg-[#111826] border border-gray-200 dark:border-white/10 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-medium shadow-sm group-hover:border-slate-300 dark:group-hover:border-white/20"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
               setPage(1);
-            }} />
+            }}
+          />
         </div>
       </div>
 
       <PrestamosTable
         rows={currentRows}
         onView={setSelected}
+        onEdit={setEditRecord}
         onDelete={setDeleteId}
         search={search}
       />
@@ -95,6 +105,12 @@ export default function Loans() {
       <PrestamoModal
         prestamo={selected}
         onClose={() => setSelected(null)}
+      />
+
+      <EditPrestamoModal
+        prestamo={editRecord}
+        onClose={() => setEditRecord(null)}
+        onUpdate={cargarPrestamos}
       />
 
 

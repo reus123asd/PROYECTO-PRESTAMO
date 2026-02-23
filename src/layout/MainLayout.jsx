@@ -43,25 +43,39 @@ export default function MainLayout() {
 
   return (
 
-    <div
-      className="min-h-screen bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors">
-      <div className='flex h-screen overflow-hidden'>
+    <div className="min-h-screen bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors">
+      <div className="flex h-screen overflow-hidden relative">
+        {/* Backdrop for mobile */}
+        {!sideBarCollapsed && (
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden transition-opacity"
+            onClick={() => setSideBarCollapsed(true)}
+          />
+        )}
+
         <Sidebar
           collapsed={sideBarCollapsed}
           onToggle={() => setSideBarCollapsed(p => !p)}
           currentPage={currentPage}
-          onPageChange={setCurrentPage}
+          onPageChange={(page) => {
+            setCurrentPage(page);
+            if (window.innerWidth < 768) setSideBarCollapsed(true);
+          }}
         />
-        <div className='flex-1 flex flex-col overflow-hidden '>
+
+        <div className="flex-1 flex flex-col overflow-hidden relative">
           <Header
             sidebarCollapsed={sideBarCollapsed}
             onToggleSidebar={() => setSideBarCollapsed(!sideBarCollapsed)}
-            setCurrentView={setCurrentPage}
+            setCurrentView={(view) => {
+              setCurrentPage(view);
+              if (window.innerWidth < 768) setSideBarCollapsed(true);
+            }}
             darkMode={darkMode}
             toggleTheme={() => setDarkMode(p => !p)}
           />
-          <main className='flex-1 overflow-y-auto bg-transparent'>
-            <div className='p-6 space-y-6'>
+          <main className="flex-1 overflow-y-auto bg-transparent custom-scrollbar">
+            <div className="p-4 md:p-8 lg:p-10 space-y-6 md:space-y-10">
               {currentPage === "Profile" && <Profile />}
               {currentPage === "Dashboard" && <Dashboard />}
               {currentPage === "Historial" && <Loans />}
@@ -71,7 +85,7 @@ export default function MainLayout() {
           </main>
         </div>
       </div>
-    </div >
+    </div>
 
   )
 }

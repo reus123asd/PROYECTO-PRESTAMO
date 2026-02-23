@@ -9,10 +9,13 @@ const Sidebar = ({ collapsed, currentPage, onPageChange }) => {
 
   return (
     <aside
-      className={`${
-        collapsed ? "w-20" : "w-72"
-      } transition-all bg-white/80 dark:bg-slate-900/80
-      border-r border-slate-200 dark:border-slate-700 flex flex-col`}
+      className={`
+        fixed inset-y-0 left-0 z-50 transition-all duration-300 transform
+        ${collapsed ? "-translate-x-full md:translate-x-0 md:w-20" : "translate-x-0 w-72"}
+        bg-white/95 dark:bg-slate-900/95 backdrop-blur-md
+        border-r border-slate-200 dark:border-slate-700 flex flex-col
+        md:relative md:translate-x-0
+      `}
     >
       {/* Logo */}
       <div className="p-5 border-b flex items-center gap-3">

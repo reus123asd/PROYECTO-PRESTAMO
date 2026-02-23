@@ -1,4 +1,4 @@
-import { X, FileText, Calendar, DollarSign, User, Phone, FileDigit, AlignLeft, Clock } from "lucide-react";
+import { X, FileText, Calendar, DollarSign, User, Phone, FileDigit, AlignLeft, Clock, Download } from "lucide-react";
 
 const estadoColors = {
   Cancelado: "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400",
@@ -99,30 +99,65 @@ export default function PrestamoModal({ prestamo, onClose }) {
             </div>
           </div>
 
-          {/* Evidencia */}
-          {prestamo.evidencia ? (
-            <a
-              href={prestamo.evidencia}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center justify-between p-4 rounded-xl border border-dashed border-gray-300 dark:border-slate-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg group-hover:scale-110 transition-transform">
-                  <FileText size={20} />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900 dark:text-white">Documento de Evidencia</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Clic para ver archivo adjunto</p>
-                </div>
+          {/* Pagos y Evidencias */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 px-1">
+              <Clock size={16} className="text-blue-500" /> Historial de Pagos y Evidencias
+            </h3>
+
+            {prestamo.pagos && prestamo.pagos.length > 0 ? (
+              <div className="space-y-3">
+                {prestamo.pagos.map((pago, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-gray-100 dark:border-white/5"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-lg">
+                        <DollarSign size={18} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900 dark:text-white">
+                          S/ {Number(pago.monto).toFixed(2)}
+                        </p>
+                        <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium italic">
+                          {pago.fecha}
+                        </p>
+                      </div>
+                    </div>
+
+                    {pago.evidencia && (
+                      <button
+                        onClick={async () => {
+                          try {
+                            const { descargarVoucherApi } = await import("../../services/pagosApi");
+                            const blob = await descargarVoucherApi(pago.id);
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = pago.evidencia || `evidencia_${pago.id}.pdf`;
+                            a.click();
+                            URL.revokeObjectURL(url);
+                          } catch (error) {
+                            console.error("Error al descargar la evidencia:", error);
+                          }
+                        }}
+                        className="p-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md hover:shadow-indigo-500/30 transition-all"
+                        title="Descargar Evidencia"
+                      >
+                        <Download size={16} />
+                      </button>
+                    )}
+                  </div>
+                ))}
               </div>
-            </a>
-          ) : (
-            <div className="flex items-center gap-3 p-4 rounded-xl border border-dashed border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-white/5">
-              <FileText size={20} className="text-gray-400" />
-              <p className="text-sm text-gray-500 dark:text-gray-400 italic">Sin evidencia adjunta.</p>
-            </div>
-          )}
+            ) : (
+              <div className="flex flex-col items-center justify-center py-8 text-center bg-gray-50 dark:bg-white/5 rounded-2xl border border-dashed border-gray-200 dark:border-slate-700">
+                <Clock size={32} className="text-gray-300 dark:text-gray-600 mb-2" />
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">No se han registrado pagos aún.</p>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Footer */}

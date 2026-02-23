@@ -19,13 +19,21 @@ export const obtenerPagos = async () => {
 };
 
 export const registrarPagoApi = async (prestamoId, payload) => {
+  const token = localStorage.getItem("token");
+  const formData = new FormData();
+
+  Object.entries(payload).forEach(([k, v]) => {
+    if (v instanceof FileList) {
+      if (v.length > 0) formData.append(k, v[0]);
+    } else if (v !== undefined && v !== null && v !== "") {
+      formData.append(k, v);
+    }
+  });
+
   const res = await fetch(`${API}/prestamos/${prestamoId}/pago`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...authHeader(),
-    },
-    body: JSON.stringify(payload),
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
   });
 
   return res.json();
@@ -33,7 +41,7 @@ export const registrarPagoApi = async (prestamoId, payload) => {
 
 export const descargarVoucherApi = async (pagoId) => {
   const res = await fetch(
-    `${API}/prestamos/pagos/${pagoId}/voucher/pdf`,
+    `${API}/prestamos/pagos/${pagoId}/voucher`,
     { headers: authHeader() }
   );
 

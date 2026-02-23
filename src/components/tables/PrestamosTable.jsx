@@ -1,4 +1,4 @@
-import { Eye, Trash2, MessageCircle } from "lucide-react";
+import { Eye, Trash2, MessageCircle, Pencil } from "lucide-react";
 
 const estadoColors = {
     Cancelado: "bg-green-600/20 text-green-400",
@@ -6,7 +6,7 @@ const estadoColors = {
     Pendiente: "bg-yellow-600/20 text-yellow-400",
 };
 
-export default function PrestamosTable({ rows, onView, onDelete, search }) {
+export default function PrestamosTable({ rows, onView, onEdit, onDelete, search }) {
     return (
         <div className="bg-white dark:bg-[#111826] rounded-2xl border border-gray-200 dark:border-white/10 overflow-hidden shadow-sm transition-colors">
             <div className="w-full overflow-x-auto scrollbar-hide">
@@ -65,6 +65,10 @@ export default function PrestamosTable({ rows, onView, onDelete, search }) {
                                     <button className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white shadow-sm hover:shadow-md transition-all"
                                         onClick={() => onView(item)} title="Ver detalles">
                                         <Eye size={16} />
+                                    </button>
+                                    <button className="p-2 bg-amber-500 hover:bg-amber-600 rounded-lg text-white shadow-sm hover:shadow-md transition-all"
+                                        onClick={() => onEdit(item)} title="Editar">
+                                        <Pencil size={16} />
                                     </button>
                                     <button className="p-2 bg-red-600 hover:bg-red-700 rounded-lg text-white shadow-sm hover:shadow-md transition-all"
                                         onClick={() => onDelete(item.id)} title="Eliminar">

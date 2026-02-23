@@ -22,3 +22,41 @@ input:-webkit-autofill:focus {
   -webkit-text-fill-color: #ffffff;
   -webkit-box-shadow: 0 0 0px 1000px #1e293b inset; /* color slate-800 */
 }
+
+/* CUSTOM SCROLLBAR - Minimalist & Premium */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* slate-300 */
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155; /* slate-700 */
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* slate-400 */
+  background-clip: content-box;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569; /* slate-600 */
+  background-clip: content-box;
+}
+
+/* Propiedad para scroll suave universal */
+html {
+  scroll-behavior: smooth;
+}

@@ -23,7 +23,11 @@ export async function registrarPrestamo(form) {
   const formData = new FormData();
 
   Object.entries(form).forEach(([k, v]) => {
-    if (v) formData.append(k, v);
+    if (v instanceof FileList) {
+      if (v.length > 0) formData.append(k, v[0]);
+    } else if (v !== undefined && v !== null && v !== "") {
+      formData.append(k, v);
+    }
   });
 
   const res = await fetch(`${API}/prestamos`, {
@@ -31,6 +35,37 @@ export async function registrarPrestamo(form) {
     headers: { Authorization: `Bearer ${token}` },
     body: formData,
   });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Error al registrar el préstamo");
+  }
+
+  return res.json();
+}
+
+export async function actualizarPrestamo(id, form) {
+  const token = localStorage.getItem("token");
+  const formData = new FormData();
+
+  Object.entries(form).forEach(([k, v]) => {
+    if (v instanceof FileList) {
+      if (v.length > 0) formData.append(k, v[0]);
+    } else if (v !== undefined && v !== null && v !== "") {
+      formData.append(k, v);
+    }
+  });
+
+  const res = await fetch(`${API}/prestamos/${id}`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Error al actualizar el préstamo");
+  }
 
   return res.json();
 }
