@@ -10,10 +10,14 @@ import { toast } from "sonner";
 import { Zap, Mail, Lock, User, ArrowRight, CheckCircle2 } from "lucide-react";
 
 const registerSchema = z.object({
-  username: z
+  nombres: z
     .string()
-    .min(3, "Mínimo 3 caracteres")
-    .min(1, "El nombre de usuario es obligatorio"),
+    .min(2, "Mínimo 2 caracteres")
+    .min(1, "El nombre es obligatorio"),
+  apellidos: z
+    .string()
+    .min(2, "Mínimo 2 caracteres")
+    .min(1, "El apellido es obligatorio"),
   email: z.string().email("Correo inválido").min(1, "El correo es obligatorio"),
   password: z
     .string()
@@ -108,13 +112,23 @@ const Register = () => {
 
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-4">
-              <InputField
-                label="Nombre de Usuario"
-                placeholder="Tu nombre de usuario"
-                icon={User}
-                error={errors.username?.message}
-                {...register("username")}
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <InputField
+                  label="Nombres"
+                  placeholder="Tu nombre"
+                  icon={User}
+                  error={errors.nombres?.message}
+                  {...register("nombres")}
+                />
+
+                <InputField
+                  label="Apellidos"
+                  placeholder="Tu apellido"
+                  icon={User}
+                  error={errors.apellidos?.message}
+                  {...register("apellidos")}
+                />
+              </div>
 
               <InputField
                 label="Correo Electrónico"

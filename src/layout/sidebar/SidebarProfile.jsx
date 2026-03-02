@@ -1,5 +1,5 @@
 const SidebarProfile = ({ user }) => {
-  const initial = user?.username?.[0]?.toUpperCase() || "?";
+  const initial = user?.nombres?.[0]?.toUpperCase() || "?";
 
   return (
     <div className="p-4 border-t border-slate-200 dark:border-slate-700">
@@ -9,7 +9,7 @@ const SidebarProfile = ({ user }) => {
           {initial}
         </div>
         <div>
-          <p className="text-sm font-medium">{user?.username}</p>
+          <p className="text-sm font-medium">{user?.nombres}</p>
           <p className="text-xs text-slate-500">{user?.role || "Administrador"}</p>
         </div>
       </div>

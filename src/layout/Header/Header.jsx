@@ -25,7 +25,7 @@ const Header = ({ onToggleSidebar, setCurrentView, darkMode, toggleTheme }) => {
       document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const inicial = user?.username?.[0]?.toUpperCase() || "?";
+  const inicial = user?.nombres?.[0]?.toUpperCase() || "?";
 
   return (
     <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl

@@ -17,7 +17,7 @@ const UserMenu = ({ user, setOpen, setCurrentView }) => {
     dark:border-slate-700 shadow-xl z-50 overflow-hidden">
 
       <div className="px-4 py-3 border-b">
-        <p className="font-semibold">{user?.username}</p>
+        <p className="font-semibold">{user?.nombres}</p>
         <p className="text-sm text-slate-500">{user?.email}</p>
       </div>
 

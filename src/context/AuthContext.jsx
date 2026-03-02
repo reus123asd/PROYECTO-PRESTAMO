@@ -13,8 +13,8 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
 
   useEffect(() => {
-    // Wake up server due to Render free tier inactivity
-    fetch(`${API}/prestamos`)
+    // Wake up server - silent fetch to root
+    fetch(`${API.replace('/api', '')}/`)
       .catch(() => { });
 
     const storedUser = localStorage.getItem("user");
@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user);
       setToken(data.token);
 
-      toast.success(`Bienvenido, ${data.user.username}`);
+      toast.success(`Bienvenido, ${data.user.nombres}`);
       navigate("/Home");
     } catch (error) {
       toast.error(error.message);
@@ -110,8 +110,74 @@ export const AuthProvider = ({ children }) => {
     await res.json();
   };
 
+  const forgotPassword = async (email) => {
+    const res = await fetch(`${API}/auth/forgot-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    return data;
+  };
+
+  const resetPassword = async (token, newPassword) => {
+    const res = await fetch(`${API}/auth/reset-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, newPassword }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    return data;
+  };
+
+  const loginWithGoogle = async () => {
+    try {
+      const { auth, googleProvider, signInWithPopup } = await import("../utils/firebase");
+      const result = await signInWithPopup(auth, googleProvider);
+      const userGoogle = result.user;
+
+      // Enviamos el token o datos mínimos al backend para validar/crear usuario
+      const res = await fetch(`${API}/auth/google-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          uid: userGoogle.uid,
+          email: userGoogle.email,
+          username: userGoogle.displayName,
+          photoURL: userGoogle.photoURL,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Error al iniciar con Google");
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      setUser(data.user);
+      setToken(data.token);
+
+      toast.success(`Bienvenido, ${data.user.nombres}`);
+      navigate("/Home");
+    } catch (error) {
+      toast.error(error.message || "Error al autenticar con Google");
+      throw error;
+    }
+  };
+
+  const updateUser = (newUser) => {
+    const updatedUser = { ...user, ...newUser };
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, register }}>
+    <AuthContext.Provider value={{
+      user, token, login, logout, register,
+      loginWithGoogle, forgotPassword, resetPassword, updateUser
+    }}>
       {children}
     </AuthContext.Provider>
   );

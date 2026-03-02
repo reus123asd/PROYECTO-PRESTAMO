@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "./useAuth";
 
 export const useProfile = () => {
+  const { updateUser } = useAuth();
   const [form, setForm] = useState({
-    username: "",
+    nombres: "",
+    apellidos: "",
     email: "",
   });
 
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [msg, setMsg] = useState("");
 
   const token = localStorage.getItem("token");
@@ -14,12 +18,14 @@ export const useProfile = () => {
   useEffect(() => {
     if (!token) {
       setMsg("No hay token. Inicia sesión.");
+      setFetching(false);
       return;
     }
 
     const fetchProfile = async () => {
       try {
-        const res = await fetch("https://backend-inicial-proyecto-prestamo.onrender.com/api/users/profile", {
+        setFetching(true);
+        const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/users/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -31,12 +37,18 @@ export const useProfile = () => {
         }
 
         const data = await res.json();
+        const nombresVal = data.nombres || data.username || "";
+
         setForm({
-          username: data.username ?? "",
-          email: data.email ?? "",
+          nombres: nombresVal,
+          apellidos: data.apellidos || "",
+          email: data.email || "",
         });
-      } catch {
+      } catch (err) {
+        console.error("Error fetching profile:", err);
         setMsg("Error de conexión");
+      } finally {
+        setFetching(false);
       }
     };
 
@@ -46,7 +58,7 @@ export const useProfile = () => {
   const updateProfile = async () => {
     try {
       setLoading(true);
-      const res = await fetch("https://backend-inicial-proyecto-prestamo.onrender.com/api/users/profile", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/users/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -56,6 +68,12 @@ export const useProfile = () => {
       });
 
       const data = await res.json();
+
+      if (res.ok) {
+        // Actualizamos el usuario en el contexto global y localStorage
+        updateUser(form);
+      }
+
       setMsg(data.message);
     } catch {
       setMsg("Error actualizando perfil");
@@ -70,6 +88,7 @@ export const useProfile = () => {
   return {
     form,
     loading,
+    fetching,
     msg,
     handleChange,
     updateProfile,
