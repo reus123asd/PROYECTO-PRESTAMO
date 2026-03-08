@@ -29,9 +29,15 @@ export default function Payments() {
   const [loading, setLoading] = useState(true);
   const [fecha, setFecha] = useState(new Date().toISOString().split("T")[0]);
   const [evidencia, setEvidencia] = useState(null);
+  const [filtro, setFiltro] = useState("");
 
   const prestamo = records.find(r => r.id === selectedId);
-  const pagosDelPrestamo = historial.filter(p => p.prestamoId === selectedId);
+
+  const historyBase = selectedId ? historial.filter(p => p.prestamoId === selectedId) : historial;
+  const filteredHistory = historyBase.filter(p =>
+    p.cliente.toLowerCase().includes(filtro.toLowerCase()) ||
+    p.prestamoId.includes(filtro)
+  );
 
   useEffect(() => {
     cargarDatos();
@@ -237,18 +243,30 @@ export default function Payments() {
                 </div>
                 <h2 className="text-xl font-bold">Historial Reciente</h2>
               </div>
-              {selectedId && (
-                <button
-                  onClick={() => setSelectedId("")}
-                  className="text-xs font-bold text-gray-500 hover:text-blue-500 transition-colors uppercase tracking-wider"
-                >
-                  Ver Todo
-                </button>
-              )}
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Buscar pago..."
+                    value={filtro}
+                    onChange={(e) => setFiltro(e.target.value)}
+                    className="pl-9 pr-4 py-2 rounded-xl bg-white dark:bg-[#1A2234] border border-gray-200 dark:border-white/10 text-xs font-bold outline-none focus:border-blue-500 transition-all w-48"
+                  />
+                </div>
+                {selectedId && (
+                  <button
+                    onClick={() => setSelectedId("")}
+                    className="text-xs font-bold text-gray-500 hover:text-blue-500 transition-colors uppercase tracking-wider"
+                  >
+                    Ver Todo
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="overflow-y-auto flex-1 p-6 space-y-4 custom-scrollbar">
-              {(selectedId ? pagosDelPrestamo : historial).length === 0 ? (
+              {filteredHistory.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
                   <div className="w-16 h-16 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-gray-400">
                     <CreditCard size={32} />
@@ -256,54 +274,60 @@ export default function Payments() {
                   <p className="text-gray-500 dark:text-gray-400 font-medium">No se encontraron movimientos registrados.</p>
                 </div>
               ) : (
-                (selectedId ? pagosDelPrestamo : historial).map(p => (
-                  <div
-                    key={p.id}
-                    className="group flex flex-col sm:flex-row justify-between items-start sm:items-center p-5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-300"
-                  >
-                    <div className="flex items-center gap-4 mb-4 sm:mb-0">
-                      <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#1A2234] flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm border border-gray-100 dark:border-white/5">
-                        <TrendingUp size={24} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-extrabold text-gray-900 dark:text-white capitalize leading-tight mb-1">
-                          {p.cliente}
-                        </p>
-                        <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 font-semibold">
-                          <span className="flex items-center gap-1">
-                            <Calendar size={12} /> {p.fecha}
-                          </span>
-                          <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></span>
-                          <span className="flex items-center gap-1 text-blue-600 dark:text-blue-400">
-                            ID: {p.prestamoId}
-                          </span>
+                filteredHistory.map(p => {
+                  // Buscar el prestamo original para sacar la moneda real del historial global
+                  const pOriginal = records.find(r => r.id === p.prestamoId);
+                  const monedaSimbolo = p.moneda === 'USD' || pOriginal?.moneda === 'USD' ? '$' : 'S/';
+
+                  return (
+                    <div
+                      key={p.id}
+                      className="group flex flex-col sm:flex-row justify-between items-start sm:items-center p-5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-300"
+                    >
+                      <div className="flex items-center gap-4 mb-4 sm:mb-0">
+                        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#1A2234] flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm border border-gray-100 dark:border-white/5">
+                          <TrendingUp size={24} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-extrabold text-gray-900 dark:text-white capitalize leading-tight mb-1">
+                            {p.cliente}
+                          </p>
+                          <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 font-semibold">
+                            <span className="flex items-center gap-1">
+                              <Calendar size={12} /> {p.fecha}
+                            </span>
+                            <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></span>
+                            <span className="flex items-center gap-1 text-blue-600 dark:text-blue-400">
+                              ID: {p.prestamoId}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="flex items-center justify-between w-full sm:w-auto gap-4">
-                      <div className="text-right">
-                        <p className="text-lg font-black text-gray-900 dark:text-white">
-                          S/ {Number(p.monto).toFixed(2)}
-                        </p>
-                      </div>
-
-                      {p.evidencia ? (
-                        <button
-                          onClick={() => descargarVoucher(p.id, p.evidencia)}
-                          className="p-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md hover:shadow-indigo-500/30 transition-all"
-                          title="Descargar Evidencia"
-                        >
-                          <Download size={20} />
-                        </button>
-                      ) : (
-                        <div className="p-3 bg-gray-100 dark:bg-slate-800 text-gray-400 rounded-xl cursor-not-allowed" title="Sin evidencia">
-                          <FileText size={20} />
+                      <div className="flex items-center justify-between w-full sm:w-auto gap-4">
+                        <div className="text-right">
+                          <p className="text-lg font-black text-gray-900 dark:text-white">
+                            {monedaSimbolo} {Number(p.monto).toFixed(2)}
+                          </p>
                         </div>
-                      )}
+
+                        {p.evidencia ? (
+                          <button
+                            onClick={() => descargarVoucher(p.id, p.evidencia)}
+                            className="p-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md hover:shadow-indigo-500/30 transition-all"
+                            title="Descargar Evidencia"
+                          >
+                            <Download size={20} />
+                          </button>
+                        ) : (
+                          <div className="p-3 bg-gray-100 dark:bg-slate-800 text-gray-400 rounded-xl cursor-not-allowed" title="Sin evidencia">
+                            <FileText size={20} />
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           </div>

@@ -77,7 +77,7 @@ export default function MainLayout() {
           <main className="flex-1 overflow-y-auto bg-transparent custom-scrollbar">
             <div className="p-4 md:p-8 lg:p-10 space-y-6 md:space-y-10">
               {currentPage === "Profile" && <Profile />}
-              {currentPage === "Dashboard" && <Dashboard />}
+              {currentPage === "Dashboard" && <Dashboard onNavigate={setCurrentPage} />}
               {currentPage === "Historial" && <Loans />}
               {currentPage === "Registro" && <LoanCreate />}
               {currentPage === "Pagos" && <Payments />}

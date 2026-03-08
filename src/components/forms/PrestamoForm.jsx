@@ -130,14 +130,41 @@ export default function PrestamoForm() {
               Moneda
             </label>
             <div className="relative group">
-              <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors z-10">
+                <DollarSign size={20} />
+              </div>
               <select
                 {...register("moneda")}
-                className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-[#1A2234] border border-gray-300 dark:border-white/10 text-gray-900 dark:text-gray-200 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all appearance-none font-medium"
+                className={`
+                  w-full pl-12 pr-12 py-4 rounded-[1.25rem] outline-none transition-all duration-500
+                  appearance-none font-medium text-[15px] cursor-pointer
+                  
+                  /* Glassmorphism & Colors */
+                  bg-white dark:bg-slate-900/40
+                  text-slate-900 dark:text-white
+                  
+                  /* Borders & Shadows */
+                  border border-slate-200 dark:border-white/5
+                  shadow-[0_2px_10px_-3px_rgba(0,0,0,0.07)] dark:shadow-none
+                  
+                  /* Interaction States */
+                  hover:border-blue-400 dark:hover:border-white/20
+                  hover:shadow-[0_8px_20px_-6px_rgba(59,130,246,0.15)]
+                  
+                  focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10
+                  focus:bg-white dark:focus:bg-slate-900/60
+                  
+                  ${errors.moneda ? "border-red-500/50 shadow-lg shadow-red-500/5 focus:border-red-500" : ""}
+                `}
               >
                 <option value="PEN">Soles (S/)</option>
                 <option value="USD">Dólares ($)</option>
               </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-blue-500">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
             </div>
             {errors.moneda && (
               <span className="text-xs font-bold text-red-500 ml-1">

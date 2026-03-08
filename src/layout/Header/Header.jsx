@@ -29,7 +29,7 @@ const Header = ({ onToggleSidebar, setCurrentView, darkMode, toggleTheme }) => {
 
   return (
     <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl
-    border-b px-6 py-5 relative">
+    border-b px-6 py-5 relative z-40">
 
       <div className="flex justify-between items-center">
         <button

@@ -11,6 +11,13 @@ export const getPrestamos = async () => {
   return res.json();
 };
 
+export const getEstadisticas = async () => {
+  const res = await fetch(`${API}/prestamos/stats`, {
+    headers: authHeader(),
+  });
+  return res.json();
+};
+
 export const deletePrestamo = async (id) => {
   await fetch(`${API}/prestamos/${id}`, {
     method: "DELETE",
@@ -69,3 +76,15 @@ export async function actualizarPrestamo(id, form) {
 
   return res.json();
 }
+
+export const patchEstadoPrestamo = async (id, estado) => {
+  const res = await fetch(`${API}/prestamos/${id}/estado`, {
+    method: "PATCH",
+    headers: {
+      ...authHeader(),
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ estado }),
+  });
+  return res.json();
+};

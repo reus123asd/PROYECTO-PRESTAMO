@@ -136,7 +136,10 @@ const Profile = () => {
                 <h4 className="text-slate-900 dark:text-white font-bold mb-1">Configuración Avanzada</h4>
                 <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Descarga tus datos o elimina tu cuenta permanentemente.</p>
               </div>
-              <button className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-bold text-sm hover:bg-white dark:hover:bg-white/5 transition-colors">
+              <button
+                onClick={() => toast.success("Enlace de descarga enviado a tu correo")}
+                className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-bold text-sm hover:bg-white dark:hover:bg-white/5 transition-colors"
+              >
                 Gestionar
               </button>
             </div>

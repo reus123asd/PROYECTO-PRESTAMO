@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import * as XLSX from 'xlsx';
 import { getPrestamos, deletePrestamo } from "../services/prestamosApi";
 import PrestamosTable from "../components/tables/PrestamosTable";
 import PrestamoModal from "../components/modals/PrestamoModal";
 import EditPrestamoModal from "../components/modals/EditPrestamoModal";
 import DeleteModal from "../components/modals/DeleteModal";
 import LoadingModal from "../components/common/LoadingModal";
-import { Search } from "lucide-react";
+import { Search, Download, FileSpreadsheet } from "lucide-react";
 
 export default function Loans() {
   const [records, setRecords] = useState([]);
@@ -48,6 +49,26 @@ export default function Loans() {
     (page - 1) * rowsPerPage,
     page * rowsPerPage
   );
+
+  const exportToExcel = () => {
+    const dataToExport = records.map(r => ({
+      ID: r.id,
+      Nombre: r.nombre,
+      Fecha: r.fecha,
+      Monto: r.monto,
+      Moneda: r.moneda,
+      Cuotas: r.cuotas,
+      Telefono: r.telefono,
+      Estado: r.estado
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Préstamos");
+
+    // Generar archivo y descargar
+    XLSX.writeFile(workbook, `prestamos_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
   return (
 
     <div className="w-full text-gray-900 dark:text-white transition-colors">
@@ -76,6 +97,13 @@ export default function Loans() {
             }}
           />
         </div>
+        <button
+          onClick={exportToExcel}
+          className="flex items-center gap-2 px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-lg shadow-emerald-600/20 hover:scale-[1.02] active:scale-[0.98] transition-all w-full sm:w-auto mt-2 sm:mt-0"
+        >
+          <FileSpreadsheet size={20} />
+          Exportar Excel
+        </button>
       </div>
 
       <PrestamosTable
