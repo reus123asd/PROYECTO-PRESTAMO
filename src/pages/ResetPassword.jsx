@@ -57,7 +57,7 @@ const ResetPassword = () => {
                     {!success ? (
                         <>
                             <div className="space-y-2">
-                                <h2 className="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">Restablecer Contraseña</h2>
+                                <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white leading-tight">Restablecer Contraseña</h2>
                                 <p className="text-gray-500 dark:text-gray-400 font-medium text-lg">Ingresa tu nueva contraseña a continuación.</p>
                             </div>
 

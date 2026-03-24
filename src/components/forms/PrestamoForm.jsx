@@ -17,15 +17,16 @@ import {
   Briefcase,
   CheckCircle2
 } from "lucide-react";
+import { handleLetras, handleNumeros, handleMonto } from "../../utils/formatters";
 
 const prestamoSchema = z.object({
   nombres: z.string().min(1, "Los nombres son obligatorios"),
   apellidos: z.string().min(1, "Los apellidos son obligatorios"),
   telefono: z.string().regex(/^\d{9}$/, "Debe contener exactamente 9 dígitos"),
   moneda: z.enum(["PEN", "USD"]),
-  monto: z.coerce
-    .number()
-    .min(0.01, "El monto debe ser mayor a 0"),
+  monto: z.union([z.string(), z.number()])
+    .transform((val) => Number(String(val).replace(/,/g, '')))
+    .refine((val) => !isNaN(val) && val > 0, "El monto debe ser mayor a 0"),
   fecha: z.string().refine((date) => new Date(date).toString() !== 'Invalid Date', {
     message: "Fecha inválida",
   }),
@@ -104,6 +105,7 @@ export default function PrestamoForm() {
             placeholder="Juan"
             icon={User}
             error={errors.nombres?.message}
+            onInput={handleLetras}
             {...register("nombres")}
           />
 
@@ -112,6 +114,7 @@ export default function PrestamoForm() {
             placeholder="Pérez"
             icon={User}
             error={errors.apellidos?.message}
+            onInput={handleLetras}
             {...register("apellidos")}
           />
 
@@ -122,6 +125,7 @@ export default function PrestamoForm() {
             inputMode="numeric"
             icon={Phone}
             error={errors.telefono?.message}
+            onInput={handleNumeros}
             {...register("telefono")}
           />
 
@@ -182,11 +186,11 @@ export default function PrestamoForm() {
 
           <InputField
             label="Monto solicitado"
-            type="number"
-            step="0.01"
+            type="text"
             placeholder="0.00"
             icon={DollarSign}
             error={errors.monto?.message}
+            onInput={handleMonto}
             {...register("monto")}
           />
 

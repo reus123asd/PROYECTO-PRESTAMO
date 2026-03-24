@@ -49,11 +49,11 @@ const Dashboard = ({ onNavigate }) => {
   return (
     <div className="w-full text-gray-900 dark:text-white transition-colors">
       {/* Header Section */}
-      <div className="mb-10">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+      <div className="mb-8 md:mb-10 px-1 sm:px-0">
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent break-words leading-tight">
           Dashboard
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 font-medium">
+        <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 font-medium">
           Bienvenido de nuevo. Aquí tienes un resumen ejecutivo de tus operaciones hoy.
         </p>
       </div>
@@ -93,7 +93,7 @@ const Dashboard = ({ onNavigate }) => {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {/* Activity Card */}
-        <div className="bg-white dark:bg-[#111826] p-8 rounded-[2.5rem] border border-gray-200 dark:border-white/10 shadow-2xl shadow-blue-500/5 min-h-[400px]">
+        <div className="bg-white dark:bg-[#111826] p-5 md:p-8 rounded-[2.5rem] border border-gray-200 dark:border-white/10 shadow-2xl shadow-blue-500/5 min-h-[400px]">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-xl font-bold flex items-center gap-2">
               <TrendingUp className="text-blue-500" size={24} /> Actividad Reciente
@@ -138,7 +138,7 @@ const Dashboard = ({ onNavigate }) => {
         </div>
 
         {/* Requests Card */}
-        <div className="bg-white dark:bg-[#111826] p-8 rounded-[2.5rem] border border-gray-200 dark:border-white/10 shadow-2xl shadow-blue-500/5 min-h-[400px]">
+        <div className="bg-white dark:bg-[#111826] p-5 md:p-8 rounded-[2.5rem] border border-gray-200 dark:border-white/10 shadow-2xl shadow-blue-500/5 min-h-[400px]">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-xl font-bold flex items-center gap-2">
               <Clock className="text-orange-500" size={24} /> Solicitudes Pendientes

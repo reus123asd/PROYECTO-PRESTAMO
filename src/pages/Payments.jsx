@@ -20,6 +20,7 @@ import {
   PlusCircle,
   FileCheck
 } from "lucide-react";
+import { handleMonto } from "../utils/formatters";
 
 export default function Payments() {
   const [records, setRecords] = useState([]);
@@ -70,15 +71,38 @@ export default function Payments() {
       return;
     }
 
+    const numMonto = Number(String(monto).replace(/,/g, ''));
+    const cuotaBase = prestamo.monto / Number(prestamo.cuotas);
+    const montoEsperado = prestamo.saldo < (cuotaBase + 0.05) ? prestamo.saldo : cuotaBase;
+
+    // Si pagan el saldo final pero por decimales de javascript el input (ej. 0.01) es dif al saldo (ej. 0.0099)
+    let montoAEnviar = numMonto;
+    let cuotaValidada = Number(montoEsperado.toFixed(2));
+
+    if (Math.abs(numMonto - prestamo.saldo) < 0.05) {
+      montoAEnviar = Number(prestamo.saldo); // Enviar monto exacto para matar el float bug
+      cuotaValidada = Number(prestamo.saldo.toFixed(2));
+    }
+
+    if (Math.abs(numMonto - cuotaValidada) > 0.01) {
+      toast.error(`La cuota debe ser exactamente de ${prestamo.moneda === 'USD' ? '$' : 'S/'} ${cuotaValidada.toFixed(2)}`);
+      return;
+    }
+
     try {
       const data = await registrarPagoApi(selectedId, {
-        monto,
+        monto: montoAEnviar,
         fecha,
         evidencia,
       });
 
+      if (data.message && data.message.toLowerCase().includes("excede")) {
+        toast.error(data.message);
+        return;
+      }
+
       if (data.message) {
-        toast.success(data.message);
+        toast.success("Pago registrado exitosamente");
         cargarDatos();
         setMonto("");
         setEvidencia(null);
@@ -105,11 +129,11 @@ export default function Payments() {
   return (
     <div className="w-full text-gray-900 dark:text-white transition-colors">
       {/* Header Section */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+      <div className="mb-6 md:mb-8 px-1 sm:px-0">
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent break-words leading-tight">
           Gestión de Pagos
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 max-w-2xl font-medium">
+        <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 max-w-2xl font-medium">
           Administra los abonos de tus clientes y mantén el control de las evidencias de pago de forma segura.
         </p>
       </div>
@@ -117,8 +141,8 @@ export default function Payments() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Form Side - 5 columns */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="bg-white dark:bg-[#111826] p-7 rounded-3xl border border-gray-200 dark:border-white/10 shadow-xl shadow-blue-500/5 transition-all">
-            <div className="flex items-center gap-3 mb-6">
+          <div className="bg-white dark:bg-[#111826] p-5 md:p-7 rounded-3xl border border-gray-200 dark:border-white/10 shadow-xl shadow-blue-500/5 transition-all min-w-0">
+            <div className="flex items-center gap-3 mb-5 md:mb-6">
               <div className="p-2.5 bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-xl">
                 <PlusCircle size={22} />
               </div>
@@ -140,7 +164,7 @@ export default function Payments() {
                     <option value="">Buscar por nombre...</option>
                     {records.map((r) => (
                       <option key={r.id} value={r.id}>
-                        {r.nombre} (Saldo: {r.moneda === 'USD' ? '$' : 'S/'} {r.saldo})
+                        {r.nombre} (Saldo: {r.moneda === 'USD' ? '$' : 'S/'} {Number(r.saldo).toFixed(2)})
                       </option>
                     ))}
                   </select>
@@ -152,7 +176,7 @@ export default function Payments() {
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-500 dark:text-gray-400 font-medium">Balance Actual</span>
                     <span className="font-bold text-blue-600 dark:text-blue-400">
-                      {prestamo.moneda === 'USD' ? '$' : 'S/'} {prestamo.saldo}
+                      {prestamo.moneda === 'USD' ? '$' : 'S/'} {Number(prestamo.saldo).toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
@@ -170,17 +194,18 @@ export default function Payments() {
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="min-w-0">
                   <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 ml-1">
                     Monto
                   </label>
                   <div className="relative group">
                     <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
                     <input
-                      type="number"
+                      type="text"
                       placeholder="0.00"
                       value={monto}
+                      onInput={handleMonto}
                       onChange={(e) => setMonto(e.target.value)}
                       className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-[#1A2234] border border-gray-300 dark:border-white/10 text-gray-900 dark:text-gray-200 outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-bold"
                     />
@@ -209,7 +234,7 @@ export default function Payments() {
                 <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 dark:border-slate-700 border-dashed rounded-3xl cursor-pointer bg-slate-50 dark:bg-[#1A2234] hover:bg-gray-100 dark:hover:bg-white/5 transition-all">
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
                     <FileCheck className={`w-8 h-8 mb-2 ${evidencia ? 'text-green-500' : 'text-gray-400'}`} />
-                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium text-center px-4 max-w-full truncate">
                       {evidencia ? evidencia[0].name : "Haz clic o arrastra un archivo"}
                     </p>
                   </div>
@@ -235,23 +260,23 @@ export default function Payments() {
 
         {/* Table Side - 7 columns */}
         <div className="lg:col-span-7 space-y-6">
-          <div className="bg-white dark:bg-[#111826] rounded-3xl border border-gray-200 dark:border-white/10 shadow-xl overflow-hidden flex flex-col h-full max-h-[700px]">
-            <div className="p-6 border-b border-gray-100 dark:border-white/5 bg-slate-50/50 dark:bg-slate-800/30 flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-xl">
+          <div className="bg-white dark:bg-[#111826] rounded-3xl border border-gray-200 dark:border-white/10 shadow-xl overflow-hidden flex flex-col h-full lg:max-h-[700px]">
+            <div className="p-5 md:p-6 border-b border-gray-100 dark:border-white/5 bg-slate-50/50 dark:bg-slate-800/30 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <div className="p-2.5 bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-xl shrink-0">
                   <Clock size={22} />
                 </div>
                 <h2 className="text-xl font-bold">Historial Reciente</h2>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="relative">
+              <div className="flex items-center justify-between w-full sm:w-auto gap-4">
+                <div className="relative w-full sm:w-auto">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Buscar pago..."
                     value={filtro}
                     onChange={(e) => setFiltro(e.target.value)}
-                    className="pl-9 pr-4 py-2 rounded-xl bg-white dark:bg-[#1A2234] border border-gray-200 dark:border-white/10 text-xs font-bold outline-none focus:border-blue-500 transition-all w-48"
+                    className="pl-9 pr-4 py-2 rounded-xl bg-white dark:bg-[#1A2234] border border-gray-200 dark:border-white/10 text-xs font-bold outline-none focus:border-blue-500 transition-all w-full sm:w-48"
                   />
                 </div>
                 {selectedId && (

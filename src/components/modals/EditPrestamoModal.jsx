@@ -8,13 +8,16 @@ import InputField from "../forms/InputField";
 import TextAreaField from "../forms/TextAreaField";
 import LoadingModal from "../common/LoadingModal";
 import { useEffect } from "react";
+import { handleLetras, handleNumeros, handleMonto, formatMoney } from "../../utils/formatters";
 
 const prestamoSchema = z.object({
     nombres: z.string().min(1, "Los nombres son obligatorios"),
     apellidos: z.string().min(1, "Los apellidos son obligatorios"),
     telefono: z.string().regex(/^\d{9}$/, "Debe contener exactamente 9 dígitos"),
     moneda: z.enum(["PEN", "USD"]),
-    monto: z.coerce.number().min(0.01, "El monto debe ser mayor a 0"),
+    monto: z.union([z.string(), z.number()])
+        .transform((val) => Number(String(val).replace(/,/g, '')))
+        .refine((val) => !isNaN(val) && val > 0, "El monto debe ser mayor a 0"),
     fecha: z.string(),
     cuotas: z.coerce.number().min(1, "Debe ingresar al menos 1 cuota"),
     motivo: z.string().min(1, "El motivo es obligatorio"),
@@ -50,7 +53,7 @@ export default function EditPrestamoModal({ prestamo, onClose, onUpdate }) {
             setValue("apellidos", names.slice(1).join(" ") || "");
             setValue("telefono", prestamo.telefono);
             setValue("moneda", prestamo.moneda);
-            setValue("monto", prestamo.monto);
+            setValue("monto", prestamo.monto ? formatMoney(prestamo.monto) : "");
             setValue("fecha", prestamo.fecha);
             setValue("cuotas", prestamo.cuotas);
             setValue("motivo", prestamo.motivo);
@@ -114,19 +117,23 @@ export default function EditPrestamoModal({ prestamo, onClose, onUpdate }) {
                             label="Nombres"
                             placeholder="Ej: Juan"
                             error={errors.nombres?.message}
+                            onInput={handleLetras}
                             {...register("nombres")}
                         />
                         <InputField
                             label="Apellidos"
                             placeholder="Ej: Pérez"
                             error={errors.apellidos?.message}
+                            onInput={handleLetras}
                             {...register("apellidos")}
                         />
                         <InputField
                             label="Teléfono"
                             placeholder="999888777"
                             maxLength={9}
+                            inputMode="numeric"
                             error={errors.telefono?.message}
+                            onInput={handleNumeros}
                             {...register("telefono")}
                         />
                         <div className="flex flex-col gap-1.5">
@@ -143,9 +150,9 @@ export default function EditPrestamoModal({ prestamo, onClose, onUpdate }) {
                         </div>
                         <InputField
                             label="Monto"
-                            type="number"
-                            step="0.01"
+                            type="text"
                             error={errors.monto?.message}
+                            onInput={handleMonto}
                             {...register("monto")}
                         />
                         <InputField

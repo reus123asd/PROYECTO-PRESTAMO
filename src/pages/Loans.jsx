@@ -73,11 +73,11 @@ export default function Loans() {
 
     <div className="w-full text-gray-900 dark:text-white transition-colors">
       {/* Header Section */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+      <div className="mb-6 md:mb-8 px-1 sm:px-0">
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent break-words leading-tight">
           Historial de Préstamos
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 font-medium">
+        <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 font-medium">
           Consulta y gestiona todos los movimientos registrados de forma detallada.
         </p>
       </div>

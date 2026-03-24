@@ -2,6 +2,7 @@ import { useProfile } from "../hooks/useProfile";
 import InputField from "../components/forms/InputField";
 import LoadingModal from "../components/common/LoadingModal";
 import { User, Mail, Camera, Shield, Bell, CheckCircle2, Loader2, Save } from "lucide-react";
+import { handleLetras } from "../utils/formatters";
 
 const Profile = () => {
   const { form, loading, fetching, msg, handleChange, updateProfile } = useProfile();
@@ -12,11 +13,11 @@ const Profile = () => {
       <LoadingModal show={loading} text="Guardando cambios..." />
 
       {/* Header Section */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-2">
+      <div className="mb-6 md:mb-8 px-1 sm:px-0">
+        <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-2 break-words leading-tight">
           Mi <span className="text-blue-600">Cuenta</span>
         </h1>
-        <p className="text-slate-500 dark:text-slate-400 font-medium">
+        <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 font-medium">
           Administra tu información personal y preferencias de seguridad.
         </p>
       </div>
@@ -24,7 +25,7 @@ const Profile = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column - Avatar & Quick Info */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white dark:bg-[#1A2234] rounded-3xl p-8 border border-slate-200 dark:border-white/10 shadow-xl shadow-slate-200/50 dark:shadow-none transition-all duration-300">
+          <div className="bg-white dark:bg-[#1A2234] rounded-3xl p-5 md:p-8 border border-slate-200 dark:border-white/10 shadow-xl shadow-slate-200/50 dark:shadow-none transition-all duration-300">
             <div className="relative group w-32 h-32 mx-auto mb-6">
               <div className="w-full h-full rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white text-4xl font-bold shadow-2xl shadow-blue-500/30">
                 {form.nombres?.charAt(0).toUpperCase() || "U"}
@@ -64,7 +65,7 @@ const Profile = () => {
 
         {/* Right Column - Edit Form */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white dark:bg-[#1A2234] rounded-3xl p-8 border border-slate-200 dark:border-white/10 shadow-xl shadow-slate-200/50 dark:shadow-none">
+          <div className="bg-white dark:bg-[#1A2234] rounded-3xl p-5 md:p-8 border border-slate-200 dark:border-white/10 shadow-xl shadow-slate-200/50 dark:shadow-none">
             <div className="flex items-center gap-3 mb-8">
               <div className="p-2.5 bg-blue-100 dark:bg-blue-900/40 rounded-xl text-blue-600 dark:text-blue-400">
                 <User size={20} />
@@ -84,6 +85,7 @@ const Profile = () => {
                 label="Nombres"
                 name="nombres"
                 value={form.nombres}
+                onInput={handleLetras}
                 onChange={handleChange}
                 icon={User}
                 placeholder="Tus nombres"
@@ -93,6 +95,7 @@ const Profile = () => {
                 label="Apellidos"
                 name="apellidos"
                 value={form.apellidos}
+                onInput={handleLetras}
                 onChange={handleChange}
                 icon={User}
                 placeholder="Tus apellidos"
@@ -130,7 +133,7 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="bg-slate-50 dark:bg-[#1A2234]/50 rounded-3xl p-8 border border-dashed border-slate-300 dark:border-white/10">
+          <div className="bg-slate-50 dark:bg-[#1A2234]/50 rounded-3xl p-5 md:p-8 border border-dashed border-slate-300 dark:border-white/10">
             <div className="flex items-center justify-between">
               <div>
                 <h4 className="text-slate-900 dark:text-white font-bold mb-1">Configuración Avanzada</h4>

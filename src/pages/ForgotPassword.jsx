@@ -41,16 +41,16 @@ const ForgotPassword = () => {
 
             {/* Form Side */}
             <div className="flex items-center justify-center p-6 md:p-12 lg:p-20 relative">
-                <Link to="/" className="absolute top-8 left-8 flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors font-bold group">
-                    <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                    Volver al Inicio
-                </Link>
-
                 <div className="w-full max-w-[420px] space-y-10">
+                    <Link to="/" className="static lg:absolute lg:top-8 lg:left-8 flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors font-bold group mb-6 lg:mb-0 -mt-4 lg:mt-0">
+                        <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                        Volver al Inicio
+                    </Link>
+
                     {!sent ? (
                         <>
                             <div className="space-y-2">
-                                <h2 className="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">¿Olvidaste tu contraseña?</h2>
+                                <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white leading-tight">¿Olvidaste tu contraseña?</h2>
                                 <p className="text-gray-500 dark:text-gray-400 font-medium text-lg">Ingresa tu correo y te enviaremos un link para restablecerla.</p>
                             </div>
 

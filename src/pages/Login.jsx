@@ -84,15 +84,15 @@ const Login = () => {
 
       {/* Login Form Side */}
       <div className="flex items-center justify-center p-6 md:p-12 lg:p-20 relative">
-        {/* Mobile Mini Logo */}
-        <div className="lg:hidden absolute top-8 left-8 flex items-center gap-2">
-          <Zap size={24} className="text-blue-600 dark:text-blue-400" />
-          <span className="font-black text-xl tracking-tighter dark:text-white">REUS</span>
-        </div>
-
         <div className="w-full max-w-[420px] space-y-10">
+          {/* Mobile Mini Logo */}
+          <div className="lg:hidden flex items-center gap-2 mb-6 -mt-4">
+            <Zap size={28} className="text-blue-600 dark:text-blue-400" />
+            <span className="font-black text-2xl tracking-tighter dark:text-white">REUS</span>
+          </div>
+
           <div className="space-y-2">
-            <h2 className="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white leading-tight">
               ¡Hola de nuevo!
             </h2>
             <p className="text-gray-500 dark:text-gray-400 font-medium text-lg">
